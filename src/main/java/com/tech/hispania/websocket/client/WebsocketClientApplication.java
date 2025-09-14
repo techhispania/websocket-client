@@ -1,4 +1,4 @@
-package com.tech.hispania.websocket.client.websocket_client;
+package com.tech.hispania.websocket.client;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

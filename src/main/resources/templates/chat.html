@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>WebSocket Client</title>
+</head>
+<body>
+    <h2>Send Message to WebSocket Server</h2>
+
+    <form action="/send" method="post">
+        <input type="text" name="message" placeholder="Enter message" required>
+        <button type="submit">Send</button>
+    </form>
+
+    <p th:text="${status}"></p>
+</body>
+</html>
