@@ -20,8 +20,14 @@ public class WebSocketClientManager {
 
 	private WebSocketSession session;
 
+	private boolean connected = false;
+
 	@PostConstruct
 	public void connect() throws Exception {
+		doConnect();
+	}
+
+	public void doConnect() throws Exception {
 		StandardWebSocketClient client = new StandardWebSocketClient();
 
 		client.doHandshake(new TextWebSocketHandler() {
@@ -29,6 +35,7 @@ public class WebSocketClientManager {
 			public void afterConnectionEstablished(WebSocketSession session) throws Exception {
 				logger.info("Connection established with the server");
 				WebSocketClientManager.this.session = session;
+				connected = true;
 			}
 
 			@Override
@@ -38,7 +45,21 @@ public class WebSocketClientManager {
 
 			@Override
 			public void afterConnectionClosed(WebSocketSession session, CloseStatus status) throws Exception {
-				logger.info("Connection closed");
+				logger.info("Connection closed. Reconnecting in 5sec...");
+				WebSocketClientManager.this.session = null;
+				connected = false;
+
+				new Thread(() -> {
+					try {
+						while (!connected) {
+							logger.info("Reconnecting...");
+							Thread.sleep(5000);
+							doConnect();
+						}
+					} catch (Exception e) {
+						Thread.currentThread().interrupt();
+					}
+				}).start();
 			}
 		}, "ws://localhost:8080/ws");
 	}
